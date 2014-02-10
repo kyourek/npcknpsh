@@ -92,10 +92,9 @@ class Project:
         version[version_index] = str(int(version[version_index]) + version_increment)
 
         lines = self.get_assembly_info_file_contents().split('\n')
-        for line in lines:
-
+        for i, line in enumerate(lines):
             if 'assembly: ' + version_type in line:
-                line = '[assembly: {}("{}")]'.format(version_type, '.'.join(version))
+                lines[i] = '[assembly: {}("{}")]'.format(version_type, '.'.join(version))
 
         self.set_assembly_info_file_contents('\n'.join(lines))
 
