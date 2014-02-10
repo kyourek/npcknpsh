@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+import subprocess
 
 import projectconfig
 
@@ -10,12 +11,19 @@ class Project:
         self.project_dir = project_dir
         self.config = config or projectconfig
 
+    def process(self, command):
+        err = subprocess.Popen(command).wait()
+        return err
+
     def element_tree(self):
         import xml.etree.ElementTree
         return xml.etree.ElementTree
 
     def msbuild_path(self):
         return self.config.msbuild_path
+
+    def nuget_path(self):
+        return self.config.nuget_path
 
     def test_command(self):
         return self.config.test_command
@@ -108,7 +116,7 @@ class Project:
         project_xml_doc.write(project_file)
 
         cmd = '{} "{}" /p:configuration={}'.format(self.msbuild_path(), project_file, self.build_configuration())
-        err = os.system(cmd)
+        err = self.process(cmd)
 
         return err
         
@@ -117,16 +125,17 @@ class Project:
         test_project = self.test_project()
         test_project.build(target_framework_version)
 
-        cmd = self.test_command() + ' ' + test_project.assembly_file()
-        err = os.system(cmd)
+        test_cmd = self.test_command()
+        test_assembly_file = test_project.assembly_file()
+
+        cmd = '{} "{}"'.format(test_cmd, test_assembly_file)
+        err = self.process(cmd)
 
         return err
 
     def pack(self):
 
         self.increment_version()
-
-        build_dir = self.build_dir()
 
         versions = self.target_framework_versions()
         for version in versions:
@@ -146,6 +155,17 @@ class Project:
             if os.path.exists(nuget_dir):
                 shutil.rmtree(nuget_dir)
 
+            build_dir = self.build_dir()
             shutil.copytree(build_dir, nuget_dir)
+            
+        nuget_dir = self.nuget_dir()
+        nuget_path = self.nuget_path()
+        nuspec_file = self.nuspec_file()
 
-        return 0
+        version = self.get_version('AssemblyInformationalVersion')
+        version = '.'.join(version)
+
+        cmd = '{} pack "{}" -Version "{}" -OutputDirectory "{}"'.format(nuget_path, nuspec_file, version, nuget_dir)
+        err = self.process(cmd)
+
+        return err

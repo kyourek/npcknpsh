@@ -35,5 +35,8 @@ nosetests.xml
 .project
 .pydevproject
 
-# Visual Studio 2013
+# Visual Studio
+*.suo
+*.user
+bin
 obj

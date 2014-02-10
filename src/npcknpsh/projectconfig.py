@@ -1,3 +1,5 @@
+import os
+
 msbuild_path = r'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe'
 
 test_command = r'"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console.exe"'
@@ -5,6 +7,8 @@ test_command = r'"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console.exe"'
 project_file_namespace = 'http://schemas.microsoft.com/developer/msbuild/2003'
 
 build_configuration = 'Release'
+
+nuget_path = os.path.expanduser(r'~\Programs\NuGet\nuget.exe')
 
 target_framework_versions = [
     'v3.5',
