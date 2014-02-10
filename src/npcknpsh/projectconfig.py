@@ -10,6 +10,10 @@ build_configuration = 'Release'
 
 nuget_path = os.path.expanduser(r'~\Programs\NuGet\nuget.exe')
 
+nuget_source = None
+
+nuget_api_key = None
+
 target_framework_versions = [
     'v3.5',
     'v4.0',

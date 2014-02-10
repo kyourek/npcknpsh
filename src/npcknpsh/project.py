@@ -59,6 +59,12 @@ class Project:
     def nuspec_file(self):
         return os.path.join(self.nuget_dir(), self.project_name() + '.nuspec')
 
+    def nuget_source(self):
+        return self.config.nuget_source
+
+    def nuget_api_key(self):
+        return self.config.nuget_api_key
+
     def target_framework_versions(self):
         return self.config.target_framework_versions
 
@@ -185,6 +191,14 @@ class Project:
         
         nuget_path = self.nuget_path()
         cmd = '{} push "{}"'.format(nuget_path, package_file)
+
+        nuget_source = self.nuget_source()
+        if nuget_source:
+            cmd = '{} -Source {}'.format(cmd, nuget_source)
+
+        nuget_api_key = self.nuget_api_key()
+        if nuget_api_key:
+            cmd = '{} -ApiKey {}'.format(cmd, nuget_api_key)
 
         err = self.process(cmd)
         return err
