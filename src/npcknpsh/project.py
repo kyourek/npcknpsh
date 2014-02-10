@@ -165,7 +165,27 @@ class Project:
         version = self.get_version('AssemblyInformationalVersion')
         version = '.'.join(version)
 
-        cmd = '{} pack "{}" -Version "{}" -OutputDirectory "{}"'.format(nuget_path, nuspec_file, version, nuget_dir)
+        cmd = '{} pack "{}" -Version {} -OutputDirectory "{}"'.format(nuget_path, nuspec_file, version, nuget_dir)
         err = self.process(cmd)
 
+        return err
+
+    def push(self):
+
+        err = self.pack()
+        if err:
+            return err
+
+        version = self.get_version('AssemblyInformationalVersion')
+        version = '.'.join(version)
+
+        nuget_dir = self.nuget_dir()
+        project_name = self.project_name()
+        package_file_name = '{}.{}.nupkg'.format(project_name, version)
+        package_file = os.path.join(nuget_dir, package_file_name)
+        
+        nuget_path = self.nuget_path()
+        cmd = '{} push "{}"'.format(nuget_path, package_file)
+
+        err = self.process(cmd)
         return err
