@@ -20,21 +20,20 @@ class Build:
         if project_dir:
             return project_dir
 
-        script_file = sys.argv[0]
+        script_file = os.path.abspath(sys.argv[0])
         script_path = os.path.dirname(script_file)
         
         current_path = script_path
         while True:
 
-            current_path = os.path.dirname(current_path)
             items = os.listdir(current_path)
-            files = (f for f in items if os.path.isfile(f))
-            files = [f for f in files if f.endswith('.csproj')]
+            items = [i for i in items if i.endswith('.csproj')]
+            paths = [os.path.join(current_path, i) for i in items]
+            files = [p for p in paths if os.path.isfile(p)]
 
             if len(files):
                 file = files[0]
-                file_dir = os.path.dirname(file)
-                return os.path.abspath(file_dir)
+                return os.path.dirname(file)
 
             next_path = os.path.dirname(current_path)
             if next_path == current_path:
