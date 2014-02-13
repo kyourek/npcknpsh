@@ -61,7 +61,7 @@ class Build:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description = 'Test, pack, and push NuGet packages for multiple framework version targets.'
+        description = 'Test, pack, and push NuGet packages for multiple framework target versions.'
     )
     parser.add_argument('pack_or_push', metavar = 'P', type = str, help = 'pack --or-- push')
 
