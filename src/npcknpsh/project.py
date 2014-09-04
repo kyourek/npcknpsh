@@ -158,10 +158,16 @@ class Project:
             nuget_dir = os.path.join(self.nuget_dir(), 'lib', nuget_dir)
 
             if os.path.exists(nuget_dir):
-                shutil.rmtree(nuget_dir)
-
+                shutil.rmtree(nuget_dir)                
+            
+            os.makedirs(nuget_dir)
+            
             build_dir = self.build_dir()
-            shutil.copytree(build_dir, nuget_dir)
+            build_files = [ file for file in os.listdir(build_dir) if os.path.splitext(os.path.basename(file))[0] == self.project_name() ]
+
+            for build_file in build_files:
+                orig_file = os.path.join(build_dir, build_file)
+                shutil.copy(orig_file, nuget_dir)
             
         nuget_dir = self.nuget_dir()
         nuget_path = self.nuget_path()
